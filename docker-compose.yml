@@ -2,27 +2,37 @@ version: "3.8"
 
 services:
 
-  postgres:
-    image: postgres:16
-    container_name: postgres-users-compose
-    environment:
-      POSTGRES_USER: appuser
-      POSTGRES_PASSWORD: apppass
-      POSTGRES_DB: users
-    ports:
-      - "5432:5432"
+  # postgres:
+  #   image: postgres:16
+  #   container_name: postgres-users-compose
+  #   environment:
+  #     POSTGRES_USER: appuser
+  #     POSTGRES_PASSWORD: apppass
+  #     POSTGRES_DB: users
+  #   ports:
+  #     - "5432:5432"
 
-  mongo:
+  connection-mongo:
     image: mongo:7
-    container_name: mongo-connections-compose
+    container_name: connection-mongo
     ports:
       - "27017:27017"
+    networks:
+      - network-connection
 
   connection-service:
-    image: conexoes
+    image: marcelopenas/projeto-software-conexoes
     depends_on:
-      - mongo
+      - connection-mongo
     environment:
-      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/connections
+      SPRING_DATA_MONGODB_URI: mongodb://connection-mongo:27017/connections
     ports:
       - "8080:8080"
+    networks:
+      - network-connection
+
+networks:
+  network-connection:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "0.0.0.0"
