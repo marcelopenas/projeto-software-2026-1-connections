@@ -1,10 +1,12 @@
-permissions:
-  contents: read
-  pull-requests: write
+name: Verification PR
 
 on:
   pull_request:
     branches: [ "main" ]
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   build:
